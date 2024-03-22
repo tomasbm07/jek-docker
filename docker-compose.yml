@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: mongo:latest
+    hostname: test_mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=flask_db
+      - MONGO_INITDB_ROOT_USERNAME=username
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - ./mongo_data:/data/db
+    ports:
+      - 27017:27017
+
+  flask-app:
+    build: .
+    command: "python -m gunicorn app:app --workers=2 --bind=0.0.0.0:5001"
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    links:
+      - mongodb
